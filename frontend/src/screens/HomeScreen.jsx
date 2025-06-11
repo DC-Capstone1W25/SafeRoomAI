@@ -103,7 +103,7 @@ export default function HomeScreen() {
               <Box
                 sx={{
                   width: '100%',
-                  height: 'calc(100% - 60px)',
+                  height: 'calc(100vh - 100px)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -112,9 +112,11 @@ export default function HomeScreen() {
                   overflow: 'hidden'
                 }}
               >
-                <img
+                <video
                   src="/predict/video"
-                  alt="Live MJPEG Stream"
+                  autoPlay
+                  muted
+                  controls
                   style={{
                     width: '100%',
                     height: '100%',

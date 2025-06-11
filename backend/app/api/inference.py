@@ -10,7 +10,7 @@ router = APIRouter()
 service = InferenceService(
     yolo_model_path="models/yolov8n.pt",
     autoencoder_path="models/autoencoder.h5",
-    anomaly_threshold=0.20870405435562156,
+    anomaly_threshold=0.09952242262661457,
     camera_index=0,
 )
 

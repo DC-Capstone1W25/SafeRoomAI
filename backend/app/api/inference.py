@@ -113,3 +113,12 @@ def analytics_errors():
     logs = service.pop_logs()
     errors = [entry.get("recon_error", 0.0) for entry in logs]
     return JSONResponse(content=errors)
+
+# DB access for /users route
+from sqlalchemy.orm import Session
+from fastapi import Depends
+from app.database import get_db
+
+@router.get("/users", summary="Fetch all users from RDS database")
+def read_users(db: Session = Depends(get_db)):
+    return db.execute("SELECT * FROM users").fetchall()

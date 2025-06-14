@@ -41,3 +41,6 @@ frontend/node_modules/
 logs/
 *.log
 Thumbs.db
+
+# AWS Credentials
+.env

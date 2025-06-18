@@ -26,7 +26,7 @@ class InferenceService:
         self,
         yolo_model_path: str = "models/yolov8n.pt",
         autoencoder_path: str = "models/autoencoder.h5",
-        anomaly_threshold: float = 0.20870405435562156,
+        anomaly_threshold: float = 0.08220931328833105,
         camera_index: int = 0,
         screenshot_every_n: int = 5,
     ):

@@ -1,4 +1,5 @@
 // src/screens/Analytics.jsx
+
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -25,10 +26,14 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   BarChart, Bar
 } from 'recharts';
+import '../App.css';
 import { format } from 'date-fns';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
 import StatsCard from '../components/StatsCard';
+import AnomalyChart from '../components/anomalychart';
+import AnomalyHeatmap from '../components/anomalyheatmap';
+import AnomalySnapshots from '../components/anomalysnapshots';
 
 export default function Analytics() {
   const [summary, setSummary] = useState([]);
@@ -247,7 +252,42 @@ export default function Analytics() {
             </CardContent>
           </Card>
         </Grid>
+
+        {/* Real-time Anomaly Charts - Your Custom Components */}
+        <Grid item xs={12} lg={6}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Security Anomaly Chart
+              </Typography>
+              <AnomalyChart />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} lg={6}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Activity Heatmap
+              </Typography>
+              <AnomalyHeatmap />
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Snapshot of Anomalies
+              </Typography>
+              <AnomalySnapshots />
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
     </Container>
   );
 }
+

@@ -1,3 +1,43 @@
+<<<<<<< HEAD
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+=======
 /* src/App.css */
 :root {
   --bg-color: #ffffff;
@@ -332,3 +372,126 @@ body.dark-mode .card:hover {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────── */
+
+/* Real-time Chart Styles */
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-color);
+  font-style: italic;
+}
+
+.chart-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  border-left: 3px solid #ef4444;
+}
+
+/* Anomaly Chart Styles */
+.anomaly-chart-container {
+  height: 100%;
+  position: relative;
+}
+
+/* Heatmap Styles */
+.anomaly-heatmap-container {
+  padding: 10px;
+}
+
+.heatmap-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-bottom: 15px;
+}
+
+.heatmap-cell {
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.heatmap-cell-empty {
+  opacity: 0.3;
+}
+
+.heatmap-cell-low {
+  opacity: 0.6;
+}
+
+.heatmap-cell-medium {
+  opacity: 0.8;
+}
+
+.heatmap-cell-high {
+  opacity: 1;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-color);
+}
+
+.legend-scale {
+  display: flex;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+/* Snapshots Styles */
+.anomaly-snapshots-container {
+  padding: 10px;
+}
+
+.snapshots-grid {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.snapshot-item {
+  min-width: 150px;
+  text-align: center;
+  position: relative;
+}
+
+.snapshot-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.snapshot-image {
+  transition: transform 0.2s ease;
+}
+
+.snapshot-image:hover {
+  transform: scale(1.05);
+}
+
+.no-snapshots {
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.7;
+  padding: 40px;
+  font-style: italic;
+}

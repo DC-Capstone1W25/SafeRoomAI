@@ -1,0 +1,5 @@
+outs:
+- md5: 5b85758051cacae2f4a42ceaa09fed5c
+  size: 320272
+  hash: md5
+  path: autoencoder.h5

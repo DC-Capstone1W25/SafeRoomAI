@@ -18,10 +18,13 @@ data/anomaly_screenshots/
 
 # Models and large data files
 models/
-*.h5
-*.npz
+backend/models/*.h5
+backend/models/*.npz
 data/normal_features.npy
 data/val_recon_errors.npy
+
+ # allow DVC to create .dvc files here
+!backend/models/*.dvc
 
 # Frontend (React)
 node_modules/

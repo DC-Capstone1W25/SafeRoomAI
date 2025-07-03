@@ -1,35 +1,40 @@
 # docker-compose.yml
-version: '3.8'
 
 services:
-
   backend:
     build:
-      context: .                          
-      dockerfile: ./backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: saferoom-backend
     restart: unless-stopped
-    env_file:
-      - conf/.env
     volumes:
-      - ./conf:/app/conf
       - ./backend/app:/app/app
       - ./backend/data/anomaly_screenshots:/app/data/anomaly_screenshots
       - ./backend/models:/app/models
     ports:
       - "8000:8000"
-    environment:
-      TZ: ${TZ}
+    env_file:
+      - ./conf/.env
+    secrets:
+      - source: app_env
+        target: /app/.env
+        mode: 0444  # Read-only for all users
 
+  # Frontend service
   frontend:
     build:
       context: ./frontend               
       dockerfile: Dockerfile
     container_name: saferoom-frontend
     restart: unless-stopped
-    depends_on:
-      - backend
-    env_file:
-      - conf/.env
     ports:
       - "3000:3000"
+    env_file:
+      - ./conf/.env
+    depends_on:
+      - backend
+
+# Define the secret (using your existing .env file)
+secrets:
+  app_env:
+    file: ./conf/.env

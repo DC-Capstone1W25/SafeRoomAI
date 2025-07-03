@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-selfcheck.json
+.venv
+.DS_Store
+.vscode/
+notebooks/
+data/
+models/

@@ -1,15 +1,20 @@
 # backend/app/services/yolo_service.py
+import os
 from ultralytics import YOLO
-import cv2
+import cv2, logging
 import numpy as np
 from threading import Thread
+from app.services.video_capture import get_video_source
+
 
 class MotionYoloProcessor:
     def __init__(self, model_path: str = "yolov8n.pt", source: int = 0):
         # Load YOLO model
         self.model = YOLO(model_path)
-        # OpenCV video capture
-        self.cap = cv2.VideoCapture(source)
+        # OpenCV video capture with fallback
+        PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        FALLBACK = os.path.join(PROJECT_ROOT, "sample.mp4")
+        self.cap = get_video_source(source, fallback_video=FALLBACK)
         self.frame1 = None
         self.frame2 = None
         self._init_frames()

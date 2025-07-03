@@ -1,4 +1,6 @@
 [core]
-    remote = origin
+    remote = storage
 ['remote "origin"']
     url = s3://capstonedc/dvc-storage
+['remote "storage"']
+    url = s3://saferoomai/dvcstore

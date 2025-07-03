@@ -1,0 +1,14 @@
+# bentofile.yaml
+service: app.services.bentoml_service:SafeRoomAIService
+
+include:
+  - "app/services/yolo_services.py"
+  - "scripts/import_yolo_model.py"
+
+python:
+  packages:
+    - ultralytics
+    - opencv-python-headless
+    - bentoml>=1.4
+    - fastapi
+    - uvicorn[standard]

@@ -10,10 +10,11 @@ router = APIRouter()
 service = InferenceService(
     yolo_model_path="models/yolov8n.pt",
     autoencoder_path="models/autoencoder.h5",
-    anomaly_threshold=0.09952242262661457,
-    camera_index=0,
+    anomaly_threshold=0.06564145945012571,
+    camera_index=99,
 )
-
+# expose service on router for clean shutdown
+router.service = service
 def mjpeg_streamer():
     boundary = b"--frame\r\nContent-Type: image/jpeg\r\n\r\n"
     try:
@@ -37,7 +38,6 @@ def get_logs():
         return JSONResponse(content=logs)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/activity/list", summary="List all anomaly snapshot filenames")
 def list_activity():
@@ -64,7 +64,6 @@ def list_activity():
     valid_files.sort(reverse=True)
     return JSONResponse(content=valid_files)
 
-
 @router.get("/activity/{filename}", summary="Fetch one anomaly snapshot")
 def serve_activity_image(filename: str):
     activity_dir = "data/anomaly_screenshots"
@@ -72,7 +71,6 @@ def serve_activity_image(filename: str):
     if os.path.exists(filepath) and filename.lower().endswith(".jpg"):
         return FileResponse(filepath, media_type="image/jpeg")
     raise HTTPException(status_code=404, detail="File not found")
-
 
 @router.get("/analytics/summary", summary="Aggregated anomalies per minute")
 def analytics_summary():
@@ -101,7 +99,6 @@ def analytics_summary():
         summary[minute_key] = summary.get(minute_key, 0) + 1
 
     return JSONResponse(content=summary)
-
 
 @router.get("/analytics/errors", summary="List recent reconstruction errors")
 def analytics_errors():

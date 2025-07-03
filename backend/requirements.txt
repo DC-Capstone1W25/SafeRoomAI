@@ -9,7 +9,8 @@ mediapipe
 scikit-learn
 aiofiles
 python-dotenv
-
-from fastapi import Depends
-from sqlalchemy.orm import Session
-from database import SessionLocal
+pydantic
+bentoml>=1.4
+dvc[all]>=2.0.0
+pymongo
+python-dotenv

@@ -1,12 +1,17 @@
-# ── docker-compose.yml ──────────────────────────────────────────────
+# docker-compose.yml
+version: '3.8'
+
 services:
 
   backend:
     build:
-      context: .                        # <-- repo root
+      context: .                          
       dockerfile: ./backend/Dockerfile
     container_name: saferoom-backend
     restart: unless-stopped
+    # ← load your conf/.env here
+    env_file:
+      - conf/.env
     volumes:
       - ./backend/app:/app/app
       - ./backend/data/anomaly_screenshots:/app/data/anomaly_screenshots
@@ -14,15 +19,18 @@ services:
     ports:
       - "8000:8000"
     environment:
-      TZ: UTC
+      TZ: ${TZ}
 
   frontend:
     build:
-      context: ./frontend               # <-- only build React here
+      context: ./frontend               
       dockerfile: Dockerfile
     container_name: saferoom-frontend
     restart: unless-stopped
     depends_on:
       - backend
+    # ← also load conf/.env for consistency
+    env_file:
+      - conf/.env
     ports:
       - "3000:3000"

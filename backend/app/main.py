@@ -4,7 +4,7 @@ import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from app.api.inference import router as inference_router
+from app.api.inference import router as inference_router, service as inference_service
 
 app = FastAPI(
     title="SafeRoom AI Anomaly Inference API",
@@ -27,6 +27,7 @@ else:
 def shutdown_event():
     # When Uvicorn shuts down, release the camera
     inference_router.service.release()
+    inference_service.release()
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

@@ -112,25 +112,18 @@ export default function HomeScreen() {
                   overflow: 'hidden'
                 }}
               >
-                <video
-                  src="/predict/video"
-                  autoPlay
-                  muted
-                  controls
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    borderRadius: '4px'
-                  }}
-                  onError={(e) => {
-                    console.error('Video stream error');
-                    setConnectionStatus('disconnected');
-                  }}
-                  onLoad={() => {
-                    setConnectionStatus('connected');
-                  }}
-                />
+              <img
+                src="/predict/video"
+                alt="Live security feed"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  borderRadius: 4,
+                }}
+                onError={() => setConnectionStatus('disconnected')}
+                onLoad={() => setConnectionStatus('connected')}
+              />
               </Box>
             </CardContent>
           </Card>

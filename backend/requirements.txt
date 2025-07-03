@@ -14,3 +14,5 @@ bentoml>=1.4
 dvc[all]>=2.0.0
 pymongo
 python-dotenv
+sqlalchemy
+psycopg2-binary 

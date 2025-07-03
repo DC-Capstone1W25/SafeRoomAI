@@ -9,10 +9,10 @@ services:
       dockerfile: ./backend/Dockerfile
     container_name: saferoom-backend
     restart: unless-stopped
-    # ← load your conf/.env here
     env_file:
       - conf/.env
     volumes:
+      - ./conf:/app/conf
       - ./backend/app:/app/app
       - ./backend/data/anomaly_screenshots:/app/data/anomaly_screenshots
       - ./backend/models:/app/models
@@ -29,7 +29,6 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
-    # ← also load conf/.env for consistency
     env_file:
       - conf/.env
     ports:

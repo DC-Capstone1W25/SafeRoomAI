@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
-from .database import SessionLocal  # use relative import
+from .database import SessionLocal  
 
 app = FastAPI()
 

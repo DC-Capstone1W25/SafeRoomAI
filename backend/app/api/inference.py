@@ -4,6 +4,9 @@ import datetime
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from app.services.inference_service import InferenceService
+from sqlalchemy.orm import Session
+from fastapi import Depends
+from app.database import get_db
 
 router = APIRouter()
 
@@ -110,11 +113,6 @@ def analytics_errors():
     logs = service.pop_logs()
     errors = [entry.get("recon_error", 0.0) for entry in logs]
     return JSONResponse(content=errors)
-
-# DB access for /users route
-from sqlalchemy.orm import Session
-from fastapi import Depends
-from app.database import get_db
 
 @router.get("/users", summary="Fetch all users from RDS database")
 def read_users(db: Session = Depends(get_db)):

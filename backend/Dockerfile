@@ -18,8 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # 3) Copy backend source
 COPY app    ./app
-COPY data   ./data
-COPY models ./models
+
 COPY scripts ./scripts
 
 # 4) Expose port & run

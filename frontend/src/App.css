@@ -1,43 +1,4 @@
-<<<<<<< HEAD
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-=======
 /* src/App.css */
 :root {
   --bg-color: #ffffff;
@@ -457,31 +418,42 @@ body.dark-mode .card:hover {
   border: 1px solid rgba(0,0,0,0.2);
 }
 
-/* Snapshots Styles */
+/* Snapshots Styles - Simple and Stable */
 .anomaly-snapshots-container {
-  padding: 10px;
+  padding: 20px 10px;
+  min-height: 200px;
 }
 
 .snapshots-grid {
   display: flex;
   gap: 15px;
   overflow-x: auto;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
+  min-height: 180px;
 }
 
 .snapshot-item {
   min-width: 150px;
   text-align: center;
   position: relative;
+  flex-shrink: 0;
+  margin-bottom: 10px;
 }
 
 .snapshot-image-container {
   position: relative;
   display: inline-block;
+  width: 150px;
+  height: 100px;
+  overflow: hidden;
 }
 
 .snapshot-image {
   transition: transform 0.2s ease;
+  width: 150px !important;
+  height: 100px !important;
+  object-fit: cover;
+  display: block;
 }
 
 .snapshot-image:hover {
@@ -494,4 +466,224 @@ body.dark-mode .card:hover {
   opacity: 0.7;
   padding: 40px;
   font-style: italic;
+}
+
+/* AI Feedback Buttons Styles */
+.ai-feedback-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: var(--bg-color);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+}
+
+.ai-feedback-container:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ai-feedback-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.ai-feedback-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ai-feedback-button.accept {
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.ai-feedback-button.accept:hover {
+  background-color: #10b981;
+  color: white;
+}
+
+.ai-feedback-button.reject {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.ai-feedback-button.reject:hover {
+  background-color: #ef4444;
+  color: white;
+}
+
+.ai-feedback-button.selected {
+  font-weight: bold;
+}
+
+.ai-feedback-button.selected.accept {
+  background-color: #10b981;
+  color: white;
+}
+
+.ai-feedback-button.selected.reject {
+  background-color: #ef4444;
+  color: white;
+}
+
+.ai-feedback-confirmation {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.ai-feedback-confirmation.success {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.ai-feedback-confirmation.info {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+/* Enhanced GitHub-style feedback animations */
+@keyframes feedbackPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.ai-feedback-button:active {
+  animation: feedbackPulse 0.2s ease-in-out;
+}
+
+/* Feedback status indicators */
+.feedback-accepted {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+}
+
+.feedback-rejected {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Smooth transitions for all feedback elements */
+.snapshot-item,
+.analytics-card,
+.activity-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effects for better UX */
+.ai-feedback-container:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Prevent page jumping and ensure stable layout */
+.analytics-container {
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+.analytics-section {
+  position: relative;
+  contain: layout style paint;
+}
+
+/* Prevent unwanted scrolling on feedback interactions */
+.ai-feedback-buttons button {
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.ai-feedback-buttons button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Prevent page jumping on button clicks */
+.ai-feedback-buttons button:focus,
+.ai-feedback-buttons button:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Prevent scroll on focus for Material-UI buttons */
+.MuiButton-root:focus,
+.MuiIconButton-root:focus {
+  outline: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Ensure stable positioning for feedback containers */
+.ai-feedback-container {
+  position: relative;
+  scroll-margin: 0;
+  scroll-padding: 0;
+}
+
+/* Stable snapshot layout */
+.snapshot-feedback-container {
+  position: relative;
+  z-index: 1;
+  background: white;
+  border-radius: 4px;
+  padding: 4px;
+  margin-top: 8px;
+}
+
+/* Simple page stability */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Basic analytics container */
+.analytics-container {
+  position: relative;
+}
+
+/* Simple button focus handling */
+.analytics-container button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Prevent layout shifts in analytics sections */
+.analytics-section * {
+  box-sizing: border-box;
+}
+
+/* Keep essential snapshot styles */
+.analytics-section {
+  position: relative;
+}
+
+/* Simple fix for page jumping - prevent scroll on button interactions */
+.analytics-container button,
+.analytics-container .MuiButton-root,
+.analytics-container .MuiIconButton-root {
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+}
+
+.analytics-container button:focus,
+.analytics-container .MuiButton-root:focus,
+.analytics-container .MuiIconButton-root:focus {
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+  outline-offset: 2px;
 }

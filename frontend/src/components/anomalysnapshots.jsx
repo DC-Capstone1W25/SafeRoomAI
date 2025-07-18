@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import AIFeedbackButtons from './AIFeedbackButtons';
+import feedbackService from '../services/feedbackService';
 
 const AnomalySnapshots = () => {
   const [snapshots, setSnapshots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [feedbackStates, setFeedbackStates] = useState({});
 
   useEffect(() => {
     const fetchSnapshots = async () => {
@@ -70,22 +73,68 @@ const AnomalySnapshots = () => {
     return '#ef4444'; // red
   };
 
+  const handleFeedback = async (suggestionId, feedbackType, suggestionType, event) => {
+    // Simple event prevention
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    try {
+      await feedbackService.submitFeedback(suggestionId, feedbackType, suggestionType, {
+        confidence: snapshots.find(s => s.id === suggestionId)?.confidence,
+        anomaly_type: snapshots.find(s => s.id === suggestionId)?.type
+      });
+
+      setFeedbackStates(prev => ({
+        ...prev,
+        [suggestionId]: feedbackType
+      }));
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+    }
+  };
+
   if (loading) {
-    return <div className="chart-loading">Loading snapshots...</div>;
+    return (
+      <div className="chart-loading" style={{ padding: '40px', textAlign: 'center' }}>
+        Loading snapshots...
+      </div>
+    );
   }
 
   if (snapshots.length === 0) {
     return (
-      <div className="no-snapshots">
+      <div className="no-snapshots" style={{ padding: '40px', textAlign: 'center', minHeight: '200px' }}>
         <p>No recent anomaly snapshots available</p>
+        <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+          The system will display anomaly snapshots here when they are detected.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="anomaly-snapshots-container">
+    <div
+      className="anomaly-snapshots-container"
+      style={{
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
+        backgroundColor: '#fafafa',
+        minHeight: '200px',
+        maxHeight: '300px',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
       {error && <div className="chart-error">⚠️ {error} (showing fallback data)</div>}
-      <div className="snapshots-grid">
+      <div
+        className="snapshots-grid"
+        style={{
+          scrollBehavior: 'smooth',
+          position: 'relative'
+        }}
+      >
         {snapshots.map((snap) => (
           <div key={snap.id} className="snapshot-item">
             <div className="snapshot-image-container">
@@ -99,8 +148,17 @@ const AnomalySnapshots = () => {
                   height: '100px',
                   objectFit: 'cover',
                   borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  border: '2px solid #e5e7eb'
+                  boxShadow: feedbackStates[snap.id] === 'accept'
+                    ? '0 2px 8px rgba(16, 185, 129, 0.3)'
+                    : feedbackStates[snap.id] === 'reject'
+                    ? '0 2px 8px rgba(239, 68, 68, 0.3)'
+                    : '0 2px 8px rgba(0,0,0,0.1)',
+                  border: feedbackStates[snap.id] === 'accept'
+                    ? '2px solid #10b981'
+                    : feedbackStates[snap.id] === 'reject'
+                    ? '2px solid #ef4444'
+                    : '2px solid #e5e7eb',
+                  transition: 'all 0.3s ease'
                 }}
               />
               {snap.confidence && (
@@ -121,6 +179,29 @@ const AnomalySnapshots = () => {
                   {Math.round(snap.confidence * 100)}%
                 </div>
               )}
+
+              {/* Feedback status indicator */}
+              {feedbackStates[snap.id] && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '4px',
+                    left: '4px',
+                    backgroundColor: feedbackStates[snap.id] === 'accept' ? '#10b981' : '#ef4444',
+                    color: 'white',
+                    padding: '2px 4px',
+                    borderRadius: '8px',
+                    fontSize: '8px',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '2px'
+                  }}
+                >
+                  {feedbackStates[snap.id] === 'accept' ? '✓' : '✗'}
+                  {feedbackStates[snap.id] === 'accept' ? 'Helpful' : 'Not helpful'}
+                </div>
+              )}
             </div>
             <div className="snapshot-info">
               <div className="snapshot-time" style={{fontSize: '12px', fontWeight: 'bold', marginTop: '4px'}}>
@@ -131,6 +212,17 @@ const AnomalySnapshots = () => {
                   {snap.type}
                 </div>
               )}
+
+              {/* AI Feedback Buttons */}
+              <div style={{ marginTop: '8px' }}>
+                <AIFeedbackButtons
+                  suggestionId={snap.id}
+                  suggestionType="anomaly_detection"
+                  onFeedback={handleFeedback}
+                  variant="compact"
+                  initialFeedback={feedbackStates[snap.id]}
+                />
+              </div>
             </div>
           </div>
         ))}

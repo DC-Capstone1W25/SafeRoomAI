@@ -103,7 +103,7 @@ export default function HomeScreen() {
               <Box
                 sx={{
                   width: '100%',
-                  height: 'calc(100% - 60px)',
+                  height: 'calc(100vh - 100px)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -112,23 +112,18 @@ export default function HomeScreen() {
                   overflow: 'hidden'
                 }}
               >
-                <img
-                  src="/predict/video"
-                  alt="Live MJPEG Stream"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    borderRadius: '4px'
-                  }}
-                  onError={(e) => {
-                    console.error('Video stream error');
-                    setConnectionStatus('disconnected');
-                  }}
-                  onLoad={() => {
-                    setConnectionStatus('connected');
-                  }}
-                />
+              <img
+                src="/predict/video"
+                alt="Live security feed"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  borderRadius: 4,
+                }}
+                onError={() => setConnectionStatus('disconnected')}
+                onLoad={() => setConnectionStatus('connected')}
+              />
               </Box>
             </CardContent>
           </Card>

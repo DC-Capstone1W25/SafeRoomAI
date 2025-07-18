@@ -1,31 +1,41 @@
+// frontend\src\components\anomalychart.jsx
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend
+} from 'chart.js';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
-const AnomalyChart = () => {
+export default function AnomalyChart() {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAnomalyData = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await fetch('/predict/analytics/anomaly-timeline');
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
+        const response = await fetch('/predict/analytics/summary');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        setChartData(data);
+
+        // **Transform** object→array
+        const points = Array.isArray(data)
+          ? data
+          : Object.entries(data).map(([time, count]) => ({ time, count }));
+        setChartData(points);
         setError(null);
       } catch (err) {
-        console.error('Failed to fetch anomaly timeline data:', err);
+        console.error('Failed to fetch anomaly data:', err);
         setError('Failed to load data');
-        // Fallback to mock data if API fails
+        // fallback array is already in correct format
         setChartData([
           { time: '9AM', count: 1 },
           { time: '10AM', count: 3 },
@@ -40,10 +50,7 @@ const AnomalyChart = () => {
     };
 
     fetchAnomalyData();
-
-    // Set up polling for real-time updates every 30 seconds
     const interval = setInterval(fetchAnomalyData, 30000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -52,50 +59,38 @@ const AnomalyChart = () => {
   }
 
   const data = {
-    labels: chartData.map(item => item.time || item.label),
+    labels: chartData.map(item => item.time),
     datasets: [
       {
         label: 'Anomalies Detected',
-        data: chartData.map(item => item.count || item.value),
+        data: chartData.map(item => item.count),
         borderColor: '#ef4444',
         backgroundColor: 'rgba(239, 68, 68, 0.1)',
         fill: false,
         tension: 0.3,
         pointBackgroundColor: '#ef4444',
         pointBorderColor: '#ef4444',
-        pointRadius: 4,
-      },
-    ],
+        pointRadius: 4
+      }
+    ]
   };
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false,
-      },
+      legend: { display: true, position: 'top' },
+      tooltip: { mode: 'index', intersect: false }
     },
     scales: {
       x: {
         display: true,
-        title: {
-          display: true,
-          text: 'Time'
-        }
+        title: { display: true, text: 'Time' }
       },
       y: {
         display: true,
-        title: {
-          display: true,
-          text: 'Anomaly Count'
-        },
-        beginAtZero: true,
+        title: { display: true, text: 'Anomaly Count' },
+        beginAtZero: true
       }
     }
   };
@@ -106,6 +101,4 @@ const AnomalyChart = () => {
       <Line data={data} options={options} />
     </div>
   );
-};
-
-export default AnomalyChart;
+}

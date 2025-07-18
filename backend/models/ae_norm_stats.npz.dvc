@@ -1,0 +1,5 @@
+outs:
+- md5: 8f8035f6b740a91e9575beaf5b2354ef
+  size: 1716
+  hash: md5
+  path: ae_norm_stats.npz

@@ -14,10 +14,10 @@ import {
 import {
   Home,
   Timeline,
-  Analytics,
-  Security
+  Analytics
 } from '@mui/icons-material';
 import DarkModeToggle from './DarkModeToggle';
+import logo from './logo.png';
 
 export default function NavBar({ darkMode, onToggleDarkMode }) {
   const location = useLocation();
@@ -43,7 +43,11 @@ export default function NavBar({ darkMode, onToggleDarkMode }) {
     <AppBar position="static" color="default" elevation={1}>
       <Toolbar>
         <Box display="flex" alignItems="center" gap={2} flexGrow={1}>
-          <Security color="primary" sx={{ fontSize: 32 }} />
+          <img 
+            src={logo} 
+            alt="SafeRoom AI Logo" 
+            style={{ height: '40px', width: 'auto' }} 
+          />
           <Typography variant="h6" component="div" fontWeight="bold">
             SafeRoom AI
           </Typography>

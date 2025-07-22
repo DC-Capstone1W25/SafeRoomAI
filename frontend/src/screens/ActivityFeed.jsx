@@ -28,6 +28,8 @@ import {
 import { format } from 'date-fns';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorAlert from '../components/ErrorAlert';
+import AIFeedbackButtons from '../components/AIFeedbackButtons';
+import feedbackService from '../services/feedbackService';
 
 export default function ActivityFeed() {
   const [files, setFiles] = useState([]);
@@ -37,6 +39,7 @@ export default function ActivityFeed() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [feedbackStates, setFeedbackStates] = useState({});
   const itemsPerPage = 12;
 
   useEffect(() => {
@@ -107,6 +110,22 @@ export default function ActivityFeed() {
     const prefix = fname.slice(0, 15);
     const iso = `${prefix.slice(0, 4)}-${prefix.slice(4, 6)}-${prefix.slice(6, 8)}T${prefix.slice(9, 11)}:${prefix.slice(11, 13)}:${prefix.slice(13, 15)}`;
     return new Date(iso);
+  };
+
+  const handleFeedback = async (suggestionId, feedbackType, suggestionType) => {
+    try {
+      await feedbackService.submitFeedback(suggestionId, feedbackType, suggestionType, {
+        filename: suggestionId,
+        timestamp: formatTimestamp(suggestionId).toISOString()
+      });
+
+      setFeedbackStates(prev => ({
+        ...prev,
+        [suggestionId]: feedbackType
+      }));
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+    }
   };
 
   // Pagination
@@ -180,8 +199,26 @@ export default function ActivityFeed() {
                   <Card
                     sx={{
                       cursor: 'pointer',
-                      transition: 'transform 0.2s',
-                      '&:hover': { transform: 'scale(1.02)' }
+                      transition: 'all 0.3s ease',
+                      border: feedbackStates[fname] === 'accept'
+                        ? '2px solid #10b981'
+                        : feedbackStates[fname] === 'reject'
+                        ? '2px solid #ef4444'
+                        : '1px solid',
+                      borderColor: feedbackStates[fname] ? 'transparent' : 'divider',
+                      boxShadow: feedbackStates[fname] === 'accept'
+                        ? '0 4px 12px rgba(16, 185, 129, 0.2)'
+                        : feedbackStates[fname] === 'reject'
+                        ? '0 4px 12px rgba(239, 68, 68, 0.2)'
+                        : undefined,
+                      '&:hover': {
+                        transform: 'scale(1.02)',
+                        boxShadow: feedbackStates[fname] === 'accept'
+                          ? '0 6px 16px rgba(16, 185, 129, 0.3)'
+                          : feedbackStates[fname] === 'reject'
+                          ? '0 6px 16px rgba(239, 68, 68, 0.3)'
+                          : '0 4px 12px rgba(0,0,0,0.1)'
+                      }
                     }}
                     onClick={() => setSelectedImage({ fname, timestamp })}
                   >
@@ -198,10 +235,32 @@ export default function ActivityFeed() {
                         <Typography variant="caption" color="warning.main" fontWeight="bold">
                           ANOMALY DETECTED
                         </Typography>
+                        {feedbackStates[fname] && (
+                          <Chip
+                            size="small"
+                            label={feedbackStates[fname] === 'accept' ? 'Helpful' : 'Not helpful'}
+                            color={feedbackStates[fname] === 'accept' ? 'success' : 'error'}
+                            sx={{ fontSize: '0.6rem', height: '16px' }}
+                          />
+                        )}
                       </Box>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" mb={1}>
                         {displayTime}
                       </Typography>
+
+                      {/* AI Feedback Buttons */}
+                      <Box
+                        onClick={(e) => e.stopPropagation()} // Prevent card click when interacting with feedback
+                        sx={{ mt: 1 }}
+                      >
+                        <AIFeedbackButtons
+                          suggestionId={fname}
+                          suggestionType="anomaly_detection"
+                          onFeedback={handleFeedback}
+                          variant="compact"
+                          initialFeedback={feedbackStates[fname]}
+                        />
+                      </Box>
                     </CardContent>
                   </Card>
                 </Grid>

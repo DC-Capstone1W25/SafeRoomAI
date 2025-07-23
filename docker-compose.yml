@@ -19,17 +19,18 @@ services:
     ports:
       - "8000:8000"
     environment:
-      TZ: ${TZ}
+      - TZ=America/Toronto
 
   frontend:
     build:
-      context: ./frontend               
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: saferoom-frontend
-    restart: unless-stopped
     depends_on:
       - backend
+    ports:
+      - "3000:80"
     env_file:
       - conf/.env
-    ports:
-      - "3000:3000"
+    environment:
+      - TZ=America/Toronto

@@ -1,35 +1,36 @@
 # docker-compose.yml
-version: '3.8'
-
 services:
-
   backend:
     build:
-      context: .                          
-      dockerfile: ./backend/Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: saferoom-backend
     restart: unless-stopped
     env_file:
       - conf/.env
+    environment:
+      ENV_PATH: /app/conf/.env
+      CAMERA_INDEX: "-1"
+      FALLBACK_VIDEO: "data/sample.mp4" 
+      TZ: America/Toronto
     volumes:
-      - ./conf:/app/conf
+      - ./conf:/app/conf:ro
       - ./backend/app:/app/app
-      - ./backend/data/anomaly_screenshots:/app/data/anomaly_screenshots
+      - ./backend/data:/app/data            
       - ./backend/models:/app/models
     ports:
       - "8000:8000"
-    environment:
-      TZ: ${TZ}
 
   frontend:
     build:
-      context: ./frontend               
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: saferoom-frontend
-    restart: unless-stopped
     depends_on:
       - backend
+    ports:
+      - "3000:80"
     env_file:
       - conf/.env
-    ports:
-      - "3000:3000"
+    environment:
+      TZ: America/Toronto

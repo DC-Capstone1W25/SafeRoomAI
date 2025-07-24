@@ -14,7 +14,8 @@ service = InferenceService(
     yolo_model_path="models/yolov8n.pt",
     autoencoder_path="models/autoencoder.h5",
     anomaly_threshold=0.06564145945012571,
-    camera_index=99,
+    camera_index=int(os.getenv("CAMERA_INDEX", -1)),
+    fallback_video=os.getenv("FALLBACK_VIDEO", "data/sample.mp4"),
 )
 # expose service on router for clean shutdown
 router.service = service

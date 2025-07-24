@@ -31,7 +31,7 @@ class InferenceService:
         norm_stats_path: str = "models/ae_norm_stats.npz",
         anomaly_threshold: float = 0.06564145945012571,
         camera_index: int = 0,
-        fallback_video: str = "sample.mp4",
+        fallback_video: str = "data/sample.mp4",
     ):
         # ── 1) Load all models & statistics ────────────────────────────────
         self._load_models(yolo_model_path, autoencoder_path, norm_stats_path)

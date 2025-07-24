@@ -7,13 +7,20 @@ services:
       dockerfile: Dockerfile
     container_name: saferoom-backend
     restart: unless-stopped
+    env_file:
+      - conf/.env
+    environment:
+      ENV_PATH: /app/conf/.env
+      CAMERA_INDEX: "-1"
+      FALLBACK_VIDEO: "data/sample.mp4" 
+      TZ: America/Toronto
     volumes:
+      - ./conf:/app/conf:ro
       - ./backend/app:/app/app
       - ./backend/data/anomaly_screenshots:/app/data/anomaly_screenshots
       - ./backend/models:/app/models
     ports:
       - "8000:8000"
-
     secrets:
       - source: app_env
         target: /app/.env
@@ -22,15 +29,18 @@ services:
   # Frontend service
   frontend:
     build:
-      context: ./frontend               
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: saferoom-frontend
     restart: unless-stopped
-    ports:
-      - "3000:3000"
-
     depends_on:
       - backend
+    ports:
+      - "3000:80"
+    env_file:
+      - conf/.env
+    environment:
+      TZ: America/Toronto
 
 # Define the secret (using your existing .env file)
 secrets:

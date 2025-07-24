@@ -5,8 +5,7 @@
 # SafeRoomAI-Showcase 🛡️📹
 
 **A smart surveillance and workplace behavior analytics platform.**
-
-This repository is a **curated portfolio showcase** of my contributions to *SafeRoomAI*, a capstone project developed as part of the AIDI-2005-02 course at Durham College. The goal of the project was to design and build an AI-powered video surveillance system that processes live camera feeds for security and human resource management, using real-time detection, behavioral analytics, and interactive dashboards.
+*SafeRoomAI*, a capstone project developed as part of the AIDI-2005-02 course at Durham College. The goal of the project is to design and build an AI-powered video surveillance system that processes live camera feeds for security and human resource management, using real-time detection, behavioral analytics, and interactive dashboards.
 
 > 💡 Think of it as the "Stripe of AI-powered workplace surveillance and HR analytics."
 

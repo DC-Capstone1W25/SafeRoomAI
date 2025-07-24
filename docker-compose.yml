@@ -11,7 +11,7 @@ services:
     environment:
       ENV_PATH: /app/conf/.env
       CAMERA_INDEX: "-1"
-      FALLBACK_VIDEO: "/app/data/sample.mp4" 
+      FALLBACK_VIDEO: "data/sample.mp4" 
       TZ: America/Toronto
     volumes:
       - ./conf:/app/conf:ro

@@ -1,4 +1,5 @@
 # backend/app/api/inference.py
+
 import os
 import datetime
 from fastapi import APIRouter, HTTPException
@@ -7,6 +8,7 @@ from app.services.inference_service import InferenceService
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from app.database import get_db
+from app.services.anomaly_metadata import col  # pymongo collection
 
 router = APIRouter()
 
@@ -17,8 +19,8 @@ service = InferenceService(
     camera_index=int(os.getenv("CAMERA_INDEX", -1)),
     fallback_video=os.getenv("FALLBACK_VIDEO", "data/sample.mp4"),
 )
-# expose service on router for clean shutdown
 router.service = service
+
 def mjpeg_streamer():
     boundary = b"--frame\r\nContent-Type: image/jpeg\r\n\r\n"
     try:
@@ -43,47 +45,54 @@ def get_logs():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/activity/list", summary="List all anomaly snapshot filenames")
+@router.get("/activity/list", summary="List all anomaly snapshots with metadata")
 def list_activity():
-    """
-    Returns a JSON array of filenames under data/anomaly_screenshots whose first
-    15 characters can be parsed as YYYYMMDD-HHMMSS.  Sort descending.
-    """
     activity_dir = "data/anomaly_screenshots"
     os.makedirs(activity_dir, exist_ok=True)
 
-    valid_files = []
-    for fn in os.listdir(activity_dir):
+    entries = []
+    for fn in sorted(os.listdir(activity_dir), reverse=True):
         if not fn.lower().endswith(".jpg"):
             continue
 
-        # attempt to parse the first 15 chars as "%Y%m%d-%H%M%S"
-        prefix = fn[:15]  # e.g. "20250530-214523"
-        try:
-            datetime.datetime.strptime(prefix, "%Y%m%d-%H%M%S")
-            valid_files.append(fn)
-        except ValueError:
-            continue
+        doc = col.find_one({"filename": fn})
+        entries.append({
+            "filename":    fn,
+            "metadata_id": str(doc["_id"])          if doc else None,
+            "is_anomaly":  bool(doc["is_anomaly"])  if doc else None,
+        })
 
-    valid_files.sort(reverse=True)
-    return JSONResponse(content=valid_files)
+    return JSONResponse(content=entries)
 
 @router.get("/activity/{filename}", summary="Fetch one anomaly snapshot")
 def serve_activity_image(filename: str):
     activity_dir = "data/anomaly_screenshots"
-    filepath = os.path.join(activity_dir, filename)
+    filepath     = os.path.join(activity_dir, filename)
     if os.path.exists(filepath) and filename.lower().endswith(".jpg"):
         return FileResponse(filepath, media_type="image/jpeg")
     raise HTTPException(status_code=404, detail="File not found")
 
+@router.delete("/activity/{filename}", summary="Clear anomaly: delete screenshot & update metadata")
+def clear_anomaly(filename: str):
+    activity_dir = "data/anomaly_screenshots"
+    filepath     = os.path.join(activity_dir, filename)
+
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+    result = col.update_many(
+        {"filename": filename},
+        {"$set": {"is_anomaly": False}}
+    )
+
+    return JSONResponse({
+        "success":          True,
+        "deleted_file":     not os.path.exists(filepath),
+        "metadata_updated": result.modified_count
+    })
+
 @router.get("/analytics/summary", summary="Aggregated anomalies per minute")
 def analytics_summary():
-    """
-    Returns a JSON object where each key is an ISO timestamp (to the minute)
-    and the value is the count of anomalies saved under data/anomaly_screenshots
-    for that minute.  We parse only the first 15 characters of each filename
-    as "%Y%m%d-%H%M%S".
-    """
     activity_dir = "data/anomaly_screenshots"
     os.makedirs(activity_dir, exist_ok=True)
 
@@ -92,8 +101,7 @@ def analytics_summary():
         if not fname.lower().endswith(".jpg"):
             continue
 
-        # take first 15 chars as a timestamp
-        prefix = fname[:15]  # e.g. "20250530-214523"
+        prefix = fname[:15]
         try:
             dt = datetime.datetime.strptime(prefix, "%Y%m%d-%H%M%S")
         except ValueError:
@@ -106,12 +114,7 @@ def analytics_summary():
 
 @router.get("/analytics/errors", summary="List recent reconstruction errors")
 def analytics_errors():
-    """
-    Returns a JSON array of the most recent reconstruction errors.
-    We pop logs so that /logs continues to work independently.
-    """
-    # service.pop_logs clears them, but we only need the recon_error list here:
-    logs = service.pop_logs()
+    logs   = service.pop_logs()
     errors = [entry.get("recon_error", 0.0) for entry in logs]
     return JSONResponse(content=errors)
 
